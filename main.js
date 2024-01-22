@@ -7,6 +7,7 @@ const name = $('#name');
 const email = $('#email');
 const address = $('#address');
 const closeBtn = $('#close-btn');
+const formSelect = $('#form-select');
 
 let users;
 let userSelected;
@@ -36,6 +37,7 @@ form.submit((event) => {
         name: name.val(),
         email: email.val(),
         address: address.val(),
+        // categoryId: categoryId
     };
     if (!userSelected.id) {
         createUser(newUser);
@@ -96,6 +98,21 @@ listInfo.on('click', '#btn-edit', (event) => {
         .then((err) => {
             console.error(err);
         });
+
+    // Category
+    userService
+        .getUsers()
+        .then((data) => {
+            renderOption(data);
+        })
+        .catch((err) => console.log(err));
+});
+
+// Lấy categoryId
+let categoryId;
+formSelect.change((e) => {
+    const value = e.target.value;
+    categoryId = +value;
 });
 
 // Xóa
@@ -112,6 +129,19 @@ listInfo.on('click', '#btn-delete', (event) => {
             console.error(err);
         });
 });
+
+function renderOption(data) {
+    const htmlContent = `
+        ${data
+            .map((d) => {
+                return `
+                    <option ${userSelected.id === d.id ? 'selected' : ''} value="${d.id}">${d.name}</option>
+                `;
+            })
+            .join('')}
+    `;
+    formSelect.html(htmlContent);
+}
 
 function renderListInfo(users) {
     const htmlContent = `
